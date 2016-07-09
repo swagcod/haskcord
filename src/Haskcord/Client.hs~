@@ -1,0 +1,8 @@
+data Client = Client {
+    }
+
+-- | Since the Haskell websocket API only supports bracket-style
+-- connecting, it is implicit that we can only support this as well.
+connect :: (Client -> IO ()) -> IO ()
+connect = do
+    
