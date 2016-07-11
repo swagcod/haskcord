@@ -24,5 +24,5 @@ instance FromJSON GatewayResponse where
     parseJSON (Object o) = GatewayResponse <$> o .: "url"
     parseJSON _ = empty
 
-getNewGateway :: Token -> ExceptT Status IO T.Text
-getNewGateway token = view gatewayUrl <$> get routeGateway token
+getNewGateway :: Session -> Token -> ExceptT Status IO T.Text
+getNewGateway session token = view gatewayUrl <$> get session routeGateway token
