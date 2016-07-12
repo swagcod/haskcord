@@ -6,7 +6,7 @@ import qualified Data.Text as T
 import Haskcord.Resource.Id
 
 data GuildChannelResource = GuildChannelResource {
-      _guildChannelResourceId :: Guild.ChannelId
+      _guildChannelResourceId :: GuildChannelId
     , _guildChannelGuildId :: GuildId
     , _guildChannelName :: T.Text
     , _guildChannelType :: T.Text

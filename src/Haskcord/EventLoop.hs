@@ -1,5 +1,5 @@
 {-# LANGUAGE TemplateHaskell, OverloadedStrings #-}
-module Haskcord.Client
+module Haskcord.EventLoop
 where
 
 import Control.Concurrent
@@ -10,6 +10,7 @@ import Control.Monad.Except
 import Data.Aeson
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.HashMap.Strict as H
+import qualified Data.Map.Strict as M
 import qualified Data.Text as T
 import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy as TL
@@ -19,6 +20,8 @@ import qualified Network.Wreq.Session as W
 import Network.WebSockets
 import Wuss
 
+import Haskcord.Client
+import Haskcord.EventDispatch
 import Haskcord.Gateway
 import Haskcord.Token
 import Haskcord.Protocol.GatewayMessage
@@ -43,12 +46,16 @@ runWebsocket f gateway session token conn = do
     connMVar <- newMVar conn
     sessionMVar <- newMVar session
     lastSequenceMVar <- newMVar Nothing
+    cache <- newMVar $ Cache {
+          _cacheGuilds = M.empty
+        }
     f $ Client {
           _clientGateway = gateway
         , _clientToken = token
         , _clientWebsocket = connMVar
         , _clientLastSequence = lastSequenceMVar
         , _clientSession = sessionMVar
+        , _clientCache = cache
         }
 
 connectionTest :: Token -> ExceptT ConnectionError IO a
@@ -71,10 +78,17 @@ connectionTest = connect $ \client -> do
         txt <- receiveData websocket
         updateSeq client txt
         let (Just (Object obj)) = decode txt
+        -- print txt
         case H.lookup "op" obj of
-            -- TODO handle the errors and show them.
-            runExceptT $ handleEventDispatch (fromJSON $ obj H.! "t") client (obj H.! "d")
-        print txt
+            Just (Number 0) -> do
+                -- TODO handle the errors and show them.
+                let (Success typ) = fromJSON $ obj H.! "t"
+                result <- runExceptT . handleEventDispatch typ client $ obj H.! "d"
+                case result of
+                    Left err -> print err
+                    Right _ -> return ()
+                withMVar (view clientCache client) print
+            _ -> return ()
 
 updateSeq :: Client -> BL.ByteString -> IO ()
 updateSeq client txt = do

@@ -16,6 +16,7 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Haskcord.Client
+                     , Haskcord.EventLoop
                      , Haskcord.Gateway
                      , Haskcord.Protocol.GatewayMessage
                      , Haskcord.Protocol.GatewayIdentify
@@ -24,12 +25,14 @@ library
   build-depends:       aeson
                      , base >= 4.7 && < 5
                      , bytestring
+                     , containers
                      , http-types
                      , lens
                      , mtl
                      , text
                      , transformers
                      , unordered-containers
+                     , vector
                      , websockets
                      , wreq
                      , wuss
