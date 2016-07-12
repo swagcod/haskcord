@@ -22,7 +22,7 @@ newtype MessageId = MessageId Word64
     deriving (Show, Read, Eq, Ord)
 
 -- | Either a UserId or a RoleId.
-newtype OverrideId = OverrideId Word64
+newtype OverwriteId = OverwriteId Word64
     deriving (Show, Read, Eq, Ord)
 
 
@@ -32,7 +32,6 @@ parseId = withText "discord id" $ \text -> case readMaybe (T.unpack text) of
     Just val -> return val
     Nothing -> fail "failed to parse id"
 
-
 instance FromJSON UserId where
     parseJSON = fmap UserId . parseId
 
@@ -41,3 +40,9 @@ instance FromJSON GuildId where
 
 instance FromJSON GuildChannelId where
     parseJSON = fmap GuildChannelId . parseId
+
+instance FromJSON OverwriteId where
+    parseJSON = fmap OverwriteId . parseId
+
+instance FromJSON MessageId where
+    parseJSON = fmap MessageId . parseId

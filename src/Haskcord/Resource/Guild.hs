@@ -22,15 +22,15 @@ import Haskcord.Resource.Id
 --   roles
 data GuildResource = GuildResource {
       _guildResourceId :: GuildId
-    , _guildName :: T.Text
-    , _guildIconHash :: T.Text
-    , _guildSplashHash :: Maybe T.Text
-    , _guildOwnerId :: UserId
-    , _guildRegion :: T.Text
-    , _guildAfkChannelId :: GuildChannelId
-    , _guildAfkTimeout :: Int
-    , _guildVerificationLevel :: Int -- TODO better type
-    , _guildChannelIds :: V.Vector GuildChannelId
+    , _guildResourceName :: T.Text
+    , _guildResourceIconHash :: T.Text
+    , _guildResourceSplashHash :: Maybe T.Text
+    , _guildResourceOwnerId :: UserId
+    , _guildResourceRegion :: T.Text
+    , _guildResourceAfkChannelId :: GuildChannelId
+    , _guildResourceAfkTimeout :: Int
+    , _guildResourceVerificationLevel :: Int -- TODO better type
+    , _guildResourceChannelIds :: V.Vector GuildChannelId
     }
     deriving (Show, Read, Eq)
 

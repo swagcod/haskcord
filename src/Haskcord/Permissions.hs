@@ -1,15 +1,18 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell #-}
 module Haskcord.Permissions
 where
 
 import Control.Lens
 import Data.Aeson
+import qualified Data.Text as T
+import Data.Word
 
 import Haskcord.Resource.Id
 
 newtype PermissionBits = PermissionBits Word32
-    deriving (From, Show, Eq, Ord, FromJSON, ToJSON)
+    deriving (Read, Show, Eq, Ord, FromJSON, ToJSON)
 
 -- | Represents an overridden permission in a guild channel.
 --
@@ -21,13 +24,13 @@ data Overwrite = Overwrite {
     , _overwriteAllow :: PermissionBits
     , _overwriteDeny :: PermissionBits
     }
+    deriving (Show, Read, Eq)
 
-makeLenses ''permissionBits
+makeLenses ''PermissionBits
 
 instance FromJSON Overwrite where
-    parseJSON (Object v) = Overwrite
+    parseJSON = withObject "Overwrite" $ \v -> Overwrite
         <$> v .: "id"
         <*> v .: "type"
         <*> v .: "allow"
         <*> v .: "deny"
-    parseJSON _ = empty

@@ -48,6 +48,7 @@ runWebsocket f gateway session token conn = do
     lastSequenceMVar <- newMVar Nothing
     cache <- newMVar $ Cache {
           _cacheGuilds = M.empty
+        , _cacheGuildChannels = M.empty
         }
     f $ Client {
           _clientGateway = gateway

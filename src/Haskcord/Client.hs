@@ -12,6 +12,7 @@ import qualified Network.Wreq.Session as W
 import Haskcord.Resource.Base
 import Haskcord.Resource.Id
 import Haskcord.Resource.Guild
+import Haskcord.Resource.GuildChannel
 import Haskcord.Token
 
 
@@ -26,6 +27,7 @@ data Client = Client {
 
 data Cache = Cache {
       _cacheGuilds :: M.Map GuildId GuildResource
+    , _cacheGuildChannels :: M.Map GuildChannelId GuildChannelResource
     }
     deriving (Show, Read, Eq)
 
@@ -39,6 +41,10 @@ class (Resource a, Ord i) => CacheResource a i | a -> i where
 instance CacheResource GuildResource GuildId where
     cacheLens = cacheGuilds
     resourceIdLens = guildResourceId
+
+instance CacheResource GuildChannelResource GuildChannelId where
+    cacheLens = cacheGuildChannels
+    resourceIdLens = guildChannelResourceId
 
 cacheResource :: CacheResource a i => Client -> a -> IO ()
 cacheResource client resource = modifyMVar_ (view clientCache client) insertIntoCache
